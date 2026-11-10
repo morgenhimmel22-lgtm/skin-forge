@@ -20,7 +20,7 @@ jobs:
       - name: Flutter-Projekt initialisieren
         run: flutter create . --platforms=android --project-name skinforge --org com.skinforge
 
-      - name: Dateien prüfen (Debug)
+      - name: Debug - Ordnerstruktur prüfen
         run: ls -la android/app/
 
       - name: Set compileSdk to 36
@@ -36,4 +36,3 @@ jobs:
         with:
           name: skinforge-apk
           path: build/app/outputs/flutter-apk/app-release.apk
-
