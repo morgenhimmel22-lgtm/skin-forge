@@ -20,11 +20,20 @@ jobs:
       - name: Flutter-Projekt initialisieren
         run: flutter create . --platforms=android --project-name skinforge --org com.skinforge
 
-      - name: Set compileSdk to 36
+      - name: Set compileSdk to 36 in all subprojects
         run: |
-          find android/app -name "build.gradle*" -exec sed -i -E 's/^[[:space:]]*compileSdk[[:space:]]*=.*/compileSdk = 36/' {} +
-          echo "--- build.gradle.kts nach der Änderung ---"
-          cat android/app/build.gradle.kts || cat android/app/build.gradle
+          cat >> android/build.gradle << 'EOF'
+          
+          subprojects { project ->
+              afterEvaluate {
+                  if (project.hasProperty('android')) {
+                      project.android {
+                          compileSdkVersion 36
+                      }
+                  }
+              }
+          }
+          EOF
 
       - name: INTERNET-Berechtigung ergänzen
         run: sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <application#' android/app/src/main/AndroidManifest.xml
