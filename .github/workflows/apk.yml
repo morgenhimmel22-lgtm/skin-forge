@@ -35,6 +35,29 @@ jobs:
         run: |
           sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <application#' android/app/src/main/AndroidManifest.xml
 
+      # Schreibt die pubspec.yaml mit passender SDK-Angabe, egal was im Repository steht
+      - name: pubspec.yaml setzen
+        run: |
+          cat > pubspec.yaml << 'EOF'
+          name: skinforge
+          description: Minecraft-Skin- und Texture-Pack-Creator
+          publish_to: 'none'
+          version: 1.0.0+1
+          environment:
+            sdk: '>=3.3.0 <4.0.0'
+          dependencies:
+            flutter:
+              sdk: flutter
+            http: ^1.2.0
+            image: ^4.2.0
+            archive: ^3.6.1
+            file_picker: ^8.1.2
+            path_provider: ^2.1.0
+            share_plus: ^10.0.0
+          flutter:
+            uses-material-design: true
+          EOF
+
       - run: flutter pub get
       - run: flutter build apk --release
 
