@@ -1,10 +1,9 @@
-environment:
-  sdk: '^3.13.0'
-  name: skinforge
+name: skinforge
 description: Minecraft-Skin- und Texture-Pack-Creator
 publish_to: 'none'
 version: 1.0.0+1
-
+environment:
+  sdk: '^3.13.0'
 
 dependencies:
   flutter:
