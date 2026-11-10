@@ -26,6 +26,8 @@ jobs:
           flutter create --platforms=android --project-name skinforge --org com.skinforge _tmp
           cp -r _tmp/android android
           rm -rf _tmp
+      - name: Set compileSdk to 36
+        run: sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 36/g' android/app/build.gradle
 
       # Ohne diese Zeile hat die Release-APK keinen Internetzugriff
       - name: INTERNET-Berechtigung ergänzen
