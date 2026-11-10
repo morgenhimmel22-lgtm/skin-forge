@@ -20,8 +20,11 @@ jobs:
       - name: Flutter-Projekt initialisieren
         run: flutter create . --platforms=android --project-name skinforge --org com.skinforge
 
+      - name: Dateien prüfen (Debug)
+        run: ls -la android/app/
+
       - name: Set compileSdk to 36
-        run: sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 36/g' android/app/build.gradle
+        run: sed -i 's/compileSdk = flutter.compileSdkVersion/compileSdk = 36/g' android/app/build.gradle.kts
 
       - name: INTERNET-Berechtigung ergänzen
         run: sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <application#' android/app/src/main/AndroidManifest.xml
@@ -33,3 +36,4 @@ jobs:
         with:
           name: skinforge-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
