@@ -1,41 +1,20 @@
-name: APK bauen
+name: skinforge
+description: Minecraft-Skin- und Texture-Pack-Creator
+publish_to: 'none'
+version: 1.0.0+1
 
-on:
-  workflow_dispatch:
-  push:
-    branches: [main]
+environment:
+  sdk: '>=3.3.0 <4.0.0'
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.0
+  image: ^4.2.0
+  archive: ^3.6.1
+  file_picker: ^8.1.2
+  path_provider: ^2.1.0
+  share_plus: ^10.0.0
 
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '17'
-
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: stable
-
-      # Android-Ordner erzeugen; lib/main.dart und pubspec.yaml bleiben unangetastet
-      - name: Android-Projekt erzeugen
-        run: |
-          flutter create --platforms=android --project-name skinforge --org com.skinforge _tmp
-          cp -r _tmp/android android
-          rm -rf _tmp
-
-      # Ohne diese Zeile hat die Release-APK keinen Internetzugriff
-      - name: INTERNET-Berechtigung ergänzen
-        run: |
-          sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <application#' android/app/src/main/AndroidManifest.xml
-
-      - run: flutter pub get
-      - run: flutter build apk --release
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: skinforge-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+flutter:
+  uses-material-design: true
