@@ -16,39 +16,12 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # Feste Flutter-Version statt "stable", damit neue Flutter-Änderungen den Build nicht plötzlich brechen
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.29.3'
           channel: stable
           cache: true
-
-      # pubspec.yaml mit korrekter SDK-Angabe schreiben (überschreibt die Datei im Repo)
-      - name: pubspec.yaml setzen
-        run: |
-          cat > pubspec.yaml << 'EOF'
-          name: skinforge
-          description: Minecraft-Skin- und Texture-Pack-Creator
-          publish_to: 'none'
-          version: 1.0.0+1
-
-          environment:
-            sdk: '>=3.3.0 <4.0.0'
-
-          dependencies:
-            flutter:
-              sdk: flutter
-            http: ^1.2.0
-            image: ^4.2.0
-            archive: ^3.6.1
-            file_picker: ^8.1.2
-            path_provider: ^2.1.0
-            share_plus: ^10.0.0
-
-          flutter:
-            uses-material-design: true
-          EOF
-          echo "---- pubspec.yaml Inhalt ----"
-          cat pubspec.yaml
 
       # Android-Ordner erzeugen; lib/main.dart und pubspec.yaml bleiben unangetastet
       - name: Android-Projekt erzeugen
@@ -62,17 +35,38 @@ jobs:
         run: |
           sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <application#' android/app/src/main/AndroidManifest.xml
 
-      - name: Abhängigkeiten laden
-        run: flutter pub get
+      # Schreibt die pubspec.yaml mit passender SDK-Angabe, egal was im Repository steht
+      - name: pubspec.yaml setzen
+        run: |
+          cat > pubspec.yaml << 'EOF'
+          name: skinforge
+          description: Minecraft-Skin- und Texture-Pack-Creator
+          publish_to: 'none'
+          version: 1.0.0+1
+          environment:
+            sdk: '>=3.3.0 <4.0.0'
+          dependencies:
+            flutter:
+              sdk: flutter
+            http: ^1.2.0
+            image: ^4.2.0
+            archive: ^3.6.1
+            file_picker: ^8.1.2
+            path_provider: ^2.1.0
+            share_plus: ^10.0.0
+          flutter:
+            uses-material-design: true
+          EOF
 
-      - name: APK bauen
-        run: flutter build apk --release
+      - run: flutter pub get
+      - run: flutter build apk --release
 
       - name: Gefundene APK-Dateien anzeigen
         if: always()
         run: |
           find . -name '*.apk' -not -path './.git/*' || true
 
+      # Lädt jede gefundene APK hoch, auch wenn Flutter den Ausgabepfad anders meldet
       - uses: actions/upload-artifact@v4
         if: always()
         with:
